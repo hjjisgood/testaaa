@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .bar{
+            width:0%;
+            line-height:50px;
+            border-radius: 5px;
+            opacity: 0.5;
+            text-align: center;
+            background: #88f;
+            transition: all 2s linear;
+        }
+        .bar_keyframes{
+            width:100%;
+            line-height:50px;
+            border-radius: 5px;
+            opacity: 0.5;
+            text-align: center;
+            background: #88f;
+            animation: bar 2s linear;
+            border: 1px solid transparent;
+        }
+        @keyframes bar {
+            0% {background: red}
+            100% {background: yellow}
+        }
+
+    </style>
+</head>
+<body ng-app="app" ng-controller="myCtrl">
+    <div class="bar" id="bar">{{bar}}%</div>
+    <div class="bar_keyframes"></div>
+<script src="angular.js"></script>
+    <script>
+        var app=angular.module("app",[]);
+        app.controller('myCtrl',function($scope,$interval){
+            bar.style.width='100%';
+            $scope.bar=0;
+            $scope.timer=$interval(function(){
+                $scope.bar+=1
+                console.log($scope.bar)
+            },20,100)
+
+
+
+        })
+
+    </script>
+</body>
+</html>

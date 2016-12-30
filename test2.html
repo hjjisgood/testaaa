@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+      <head>
+           <title>1</title>
+         <meta charset="utf-8">
+      </head>
+      <style type="text/css">
+              ul{
+                padding:0;
+                margin: 0;
+              }
+              li{
+                list-style: none;
+
+
+              }
+              .H_table{
+                width: 100%;
+                overflow-y: auto
+              }
+              .H_foot{
+                width: 100%;
+                height: 30px;
+                /*border:1px solid #ddd;*/
+                padding: 5px 0;
+                background: #eee;
+
+              }
+              .H_foot>ul{
+                  float: left;
+              }
+              .H_foot>ul>li{
+                float: left;
+                border:1px solid #ddd;
+                padding:5px 10px;
+                cursor: pointer;
+              }
+              table
+              {
+                  border-collapse:collapse;
+              }
+
+              table,th, td
+              {
+                  border: 1px solid #dddddd;
+              }
+              th{
+                  padding:10px 0;
+              }
+              .H_body>tr{
+                  height:30px;
+              }
+              .H_body td{
+                font-size: 18px;
+
+              }
+
+      </style>
+      <body>
+          <div id="grid"></div>
+          <script type="text/javascript" src='jquery-3.1.1.min.js'></script>
+          <script type="text/javascript">
+                (function($){
+                    $.fn.grid=function(option){
+                          var self=this;
+                          var def={
+                              url:"",
+                              pageSize:5,//每页显示条数
+                              currentPage:1,//当前页
+                              count:0,      //总数
+                              pageCount:1,//总页数
+                              height:null , //高度
+                              prevPage:"上一页",
+                              nextPage:"下一页",
+                              homePage:"首页",
+                              backPage:"未页",
+                              parameter:null,
+                              columns:[[]],
+                              isPage:true,
+                              clickrow:undefined,
+                              o:undefined
+                          }
+                          var opts=$.extend(def,option);
+                          var fun={
+                                start:function(){
+                                    this.init();
+                                    this.ajaxLoad();
+                                    this.ispage(1,opts.pageSize);
+                                    this.clickPageIndex();
+                                    this.fourbuttonClick();
+
+                                },
+                                init:function(){
+                                      $(self).append(
+                                            '<table class="H_table">'+
+                                                '<thead>'+
+                                                    '<tr></tr>'+
+                                                '</thead>'+
+                                                '<tbody class="H_body">'+
+                                                '</tbody>'+
+                                            '</table>'+
+                                            '<div class="H_foot">'+
+                                                '<ul>'+
+                                                    '<li class="homePage"><a herf="javascript;;">'+opts.homePage+'</a></li>'+
+                                                    '<li class="prevPage"><a herf="javascript;;">'+opts.prevPage+'</a></li>'+
+                                                '</ul>'+
+                                                 '<ul class="PageNumber">'+
+
+                                                '</ul>'+
+                                                '<ul>'+
+                                                    '<li class="nextPage"><a herf="javascript;;">'+opts.nextPage+'</a></li>'+
+                                                    '<li class="backPage"><a herf="javascript;;">'+opts.backPage+'</a></li>'+
+                                                '</ul>'+
+
+                                            '</div>'
+
+                                        )
+                                    $(".H_table").css('height',opts.height);
+                                    $.each(opts.columns,function(i,v){
+                                        $(".H_table>thead>tr").append(
+                                                '<th>'+ v.title+'</th>'
+                                        )
+                                    })
+                                },
+                                ajaxLoad:function(){
+                                    $.ajax({
+                                        url:opts.url,
+                                        data:opts.parameter,
+                                        dataType:'json',
+                                        async: false,
+                                        success:function(data){
+                                            opts.count=data.length+1;
+                                            $.each(data,function(i,v){
+                                                $(".H_body").append('<tr></tr>');
+                                                $.each(opts.columns,function(a,b){
+                                                    $(".H_body>tr").eq(i).append(
+                                                            '<td>'+v[b.field]+'</td>'
+                                                    )
+                                                })
+                                            })
+                                            opts.pageCount=Math.floor(opts.count/opts.pageSize);
+                                            for(var i=0;i<=opts.pageCount;i++){
+                                                $('.PageNumber').append(
+                                                        '<li>'+(i+1)+'</li>'
+                                                )
+                                            }
+                                            if(typeof opts.clickrow==="function"){
+                                                $('.H_body>tr').click(function(e){
+                                                    var current_row=this.rowIndex-1;
+                                                    for(var i=0;i<data.length;i++){
+                                                        if(i==current_row){
+                                                            opts.o=data[i]
+
+                                                        }
+                                                    }
+                                                    opts.clickrow(opts.o);
+                                                })
+
+                                            }
+                                        }
+                                    })
+                                },
+                                ispage:function(pageIndex,pageSize){
+                                    if(opts.isPage==true){
+                                        $(".H_body>tr").css('display','none');
+                                        $(".H_body>tr").slice(pageIndex*pageSize-pageSize,pageIndex*pageSize).css({'display':'table-row'});
+                                    }
+                                },
+                                clickPageIndex:function(){
+                                    var me=this;
+                                    $(".PageNumber>li").click(function(){
+                                        var pageIndex=this.innerHTML;
+                                        me.ispage(pageIndex,opts.pageSize);
+                                        opts.pageCount=pageIndex;
+                                        console.log(opts.pageCount);
+                                    })
+                                },
+                                fourbuttonClick:function(){
+                                    var me=this;
+                                    //首页
+                                    $(".homePage").click(function(){
+                                        me.ispage(1,opts.pageSize);
+                                        opts.pageCount=1;
+                                    })
+                                    //尾页
+                                    $(".backPage").click(function(){
+                                        me.ispage(Math.floor(opts.count/opts.pageSize)+1,opts.pageSize);
+                                    })
+                                    //上一页 下一页
+
+                                    $('.prevPage').click(function(){
+                                        if(opts.pageCount>1){
+                                            me.ispage(opts.pageCount-1,opts.pageSize);
+                                            opts.pageCount--;
+                                        }
+                                    })
+                                    $('.nextPage').click(function(){
+                                        if(opts.pageCount<=Math.floor(opts.count/opts.pageSize)){
+                                            me.ispage(opts.pageCount+1,opts.pageSize);
+                                            opts.pageCount++;
+                                        }
+                                    })
+                                }
+
+                          }
+                          fun.start();
+
+                    }
+                    $("#grid").grid({
+                        url:"text.json",
+                        columns:[
+                            {field:"1",title:"年龄"},
+                            {field:"0",title:"姓名"},
+                            {field:"2",title:"性别"},
+                            {field:"5",title:"22"},
+                        ],
+                        pageSize:10,
+                        clickrow:function(o){
+
+                        },
+                        isPage:false
+                    });
+
+                })(jQuery)
+          </script>
+      </body>
+</html>

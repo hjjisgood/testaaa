@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	   <title>1</title>
+     <meta charset="utf-8">
+  </head>
+  <style type="text/css">
+        table{
+            width:100%;
+            border-collapse:collapse;"  border="1"
+        }
+        table>td{
+            border: 1px solid #FF0000;
+        }
+  </style>
+  <link rel="stylesheet" type="text/css" href="hjj_alert.css">
+  <body>
+  <!--<table id="table1">-->
+      <!--<thead>-->
+      <!--<tr>-->
+          <!--<th>1</th>-->
+          <!--<th>2</th>-->
+          <!--<th>3</th>-->
+          <!--<th>4</th>-->
+          <!--<th>5</th>-->
+      <!--</tr>-->
+      <!--</thead>-->
+      <!--<tbody>-->
+      <!--<tr>-->
+          <!--<td>回家后感觉</td>-->
+          <!--<td>合格机构和计划</td>-->
+          <!--<td>韩国计划哥几个号</td>-->
+          <!--<td>合格机构和结构化</td>-->
+          <!--<td>合格机构和计划个</td>-->
+      <!--</tr>-->
+      <!--<tr>-->
+          <!--<td>回家后感觉</td>-->
+          <!--<td>合格机构和计划</td>-->
+          <!--<td>韩国计划哥几个号</td>-->
+          <!--<td>合格机构和结构化</td>-->
+          <!--<td>合格机构和计划个</td>-->
+      <!--</tr>-->
+      <!--<tr>-->
+          <!--<td>回家后感觉</td>-->
+          <!--<td>合格机构和计划</td>-->
+          <!--<td>韩国计划哥几个号</td>-->
+          <!--<td>合格机构和结构化</td>-->
+          <!--<td>合格机构和计划个</td>-->
+      <!--</tr>-->
+      <!--<tr>-->
+          <!--<td>回家后感觉</td>-->
+          <!--<td>合格机构和计划</td>-->
+          <!--<td>韩国计划哥几个号</td>-->
+          <!--<td>合格机构和结构化</td>-->
+          <!--<td>合格机构和计划个</td>-->
+      <!--</tr>-->
+      <!--<tr>-->
+          <!--<td>回家后感觉</td>-->
+          <!--<td>合格机构和计划</td>-->
+          <!--<td>韩国计划哥几个号</td>-->
+          <!--<td>合格机构和结构化</td>-->
+          <!--<td>合格机构和计划个</td>-->
+      <!--</tr>-->
+
+      <!--</tbody>-->
+  <!--</table>-->
+  <div id="export">
+
+      <a data-type="json" href="javascript:;">导出json</a>
+
+      <a data-type="txt" href="javascript:;">导出txt</a>
+
+      <a data-type="csv" href="javascript:;">导出csv</a>
+
+      <a data-type="xls" href="javascript:;">导出excel</a>
+
+      <a data-type="doc" href="javascript:;">导出word</a>
+
+  </div>
+        <script type="text/javascript" src='jquery-3.1.1.min.js'></script>
+        <script src="Excel/Blob.js"></script>
+
+        <script src="Excel/FileSaver.js"></script>
+
+        <script src="Excel/tableExport.js"></script>
+         <script type="text/javascript">
+
+
+          var $exportLink = document.getElementById('export');
+          $exportLink.addEventListener('click', function(e){
+              e.preventDefault();
+              $.get('text.json',function(data){
+                  $(document).append(
+                          '<table id="table1">' +
+                                  '<tbody>' +
+
+                                    '</tbody>'+
+
+                          '</table>'
+                  )
+                  for(var i=0;i<data.length;i++){
+                      $("#table1 tbody").append(
+                              '<td>' +
+                                      data["0"]+
+                              '</td>'+
+                              '<td>' +
+                              data["1"]+
+                              '</td>'+
+                              '<td>' +
+                              data["2"]+
+                              '</td>'
+                      )
+                  }
+
+              })
+              if(e.target.nodeName === "A"){
+
+                  tableExport('table1', new Date()+"测试", e.target.getAttribute('data-type'));
+
+              }
+
+
+
+          }, false);
+      </script>
+  </body>
